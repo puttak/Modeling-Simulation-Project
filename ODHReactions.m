@@ -1,7 +1,9 @@
-function rxn = ODHReactions(C_solid,Ts,R,Pt,Flowin,RxnKinetic,deltaS0,deltaH0,compnumber)
+function rxn = ODHReactions(C_solid,Ts,R,Pt,Flowin,RxnKinetic,deltaS0,deltaH0,compnumber,type)
 % This code is for modeling of ODH reaction kinetics
 
 n_solid  = Flowin * C_solid ; % mole flow of each component [Nm^3/s * mol/m^3] = [mol/s]
+n_react = n_solid;       % mole of products in reaction
+
 nt_solid = sum(n_solid);
 
 Ct_solid = sum(C_solid);   % total mole concentration in solid phase
@@ -36,12 +38,18 @@ end
 % sum of rate of reactions
 rxn = rxn * RxnKinetic.vcoffrxn(:,compnumber) ;
 
+if strcmp(type,'Energy') == 1
+    
+    n_product = n_solid;
 % sum of heat reactions
+    for i = 1:6
+        n_product(i) = n_react + rxn * RxnKinetic.vcoffrxn(:,i);
+    end
+    deltaH_reactants = sum(n_react * Cpf * (298.15 - Ts));
+    deltaH_products  = sum(n_product * Cpf * (Ts - 298.15));
+    deltaH_std       = [RxnKinetic.deltaHstd]';
 
-deltaH_reactants = nt_solid * Cpf * (298.15 - T0);
-deltaH_products  = nt_solid * Cpf * (Ts - 298.15);
-deltaH_std       = sum([RxnKinetic.deltaHstd]);
-
-rxn = rxn * (20); 
+    rxn = sum(rxn * (deltaH_std + deltaH_reactants + deltaH_products));
+end
 
 end

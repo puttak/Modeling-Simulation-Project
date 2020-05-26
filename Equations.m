@@ -86,17 +86,17 @@ for i=1:Nz
         
         C_solid = [Cs_C2H6(i,k) Cs_C2H4(i,k) Cs_O2(i,k) Cs_CO2(i,k) Cs_CO(i,k) Cs_H2O(i,k) Cs_N2(i,k)];
         
-        E_Cs_C2H6(i,k)= (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],1));
+        E_Cs_C2H6(i,k)= (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],1,'Mass'));
         
-        E_Cs_C2H4(i,k)= (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],2));
+        E_Cs_C2H4(i,k)= (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],2,'Mass'));
         
-        E_Cs_O2(i,k)=   (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],3));
+        E_Cs_O2(i,k)=   (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],3,'Mass'));
         
-        E_Cs_CO2(i,k)=  (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],4));
+        E_Cs_CO2(i,k)=  (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],4,'Mass'));
         
-        E_Cs_CO(i,k)=   (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],5));
+        E_Cs_CO(i,k)=   (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],5,'Mass'));
         
-        E_Cs_H2O(i,k)=  (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],6));
+        E_Cs_H2O(i,k)=  (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],6,'Mass'));
         
         E_C_N2(i,k)=    (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)); % Term of reaction must be ommited for N2 component, consider it's an inert component
         
@@ -108,9 +108,15 @@ for i=1:Nz
             - (((Components(6).cp_R(1) + Components(6).cp_R(2)*T(i,k) + Components(6).cp_R(3)*T(i,k)^2 + Components(6).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(6))) ...
             - (((Components(7).cp_R(1) + Components(7).cp_R(2)*T(i,k) + Components(7).cp_R(3)*T(i,k)^2 + Components(7).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(7)));
         
-        E_T(i,k)= ;
+        %T(1,k) = (u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end)*T(2:end,k))/(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1));
+        %T(end,k)= (Az(end,1:end-1)*T(2:end-1,k))/Az(end,end);
+        %T(i,1)= -Ar(1,2:end)*T(i,2:end)/Ar(1,1);
+        %T(i,end)= (ker*Ar(end,1:end-1)*T(i,1:end-1) + hw*Tb)/(hw - ker*Ar(end,end));
         
-        E_Ts(i,k)= (1-epsilon)*hg*as*(T(i,k) - Ts(i,k)) + Density_bed;
+        E_T(i,k)= -u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,2:end-1)*T(:,k) - u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,1)*(u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end)*T(2:end,k))/(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1)) -u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,end)*(Az(end,1:end-1)*T(2:end-1,k))/Az(end,end) + kez*Bz(i+1,2:end-1)*T(:,k) + kez*Bz(i+1,1)*(u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end)*T(2:end,k))/(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1)) + kez*Bz(i+1,end)*(Az(end,1:end-1)*T(2:end-1,k))/Az(end,end) + ker/r_nodes(k+1)*Ar(k+1,2:end-1)*T(i,:) ...
+            + ker/r_nodes(k+1)*Ar(k+1,1)*-Ar(1,2:end)*T(i,2:end)/Ar(1,1) + ker/r_nodes(k+1)*Ar(k+1,end)*(ker*Ar(end,1:end-1)*T(i,1:end-1) + hw*Tb)/(hw - ker*Ar(end,end)) + ker*Br(k+1,2:end-1)*T(i,2:end-1) + ker*Br(k+1,1)*-Ar(1,2:end)*T(i,2:end)/Ar(1,1) + ker*Br(k+1,end)*(ker*Ar(end,1:end-1)*T(i,1:end-1) + hw*Tb)/(hw - ker*Ar(end,end)) + (1-epsilon)*hg*as*(Ts(i,k) - T(i,k));
+        
+        E_Ts(i,k)= (1-epsilon)*hg*as*(T(i,k) - Ts(i,k)) + Density_bed(i,k)*ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],1,'Energy');
     end
 end
 
@@ -121,7 +127,7 @@ F=[reshape(E_C_C2H6,Nz*Nr,1)  ;  reshape(E_C_C2H4,Nz*Nr,1)  ; ...
    reshape(E_Cs_C2H6,Nz*Nr,1) ;  reshape(E_Cs_C2H4,Nz*Nr,1) ; ...
    reshape(E_Cs_O2,Nz*Nr,1)   ;  reshape(E_Cs_CO2,Nz*Nr,1)  ; ...
    reshape(E_Cs_CO,Nz*Nr,1)   ;  reshape(E_Cs_H2O,Nz*Nr,1)  ; ...
-   reshape(E_Cpf,Nz*Nr,1)     ;reshape(E_T,Nz*Nr,1)         ; ... 
+   reshape(E_Cpf,Nz*Nr,1)     ;  reshape(E_T,Nz*Nr,1)       ; ... 
    reshape(E_Ts,Nz*Nr,1)     ];
   
 
