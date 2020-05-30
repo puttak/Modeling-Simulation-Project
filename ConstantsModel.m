@@ -28,13 +28,13 @@ y = [y_C2H6_in          ...
      y_C2H4_in y_O2_in  ...
      y_CO2_in  y_CO_in  ...
      y_H2O_in  y_N2_in     ];          % [%mol]                           Mole frac list of total componets [C2H6 C2H4 O2 CO2 CO H2O N2]
-C0_C2H6  =  ((P*y_C2H6_in)/(R*T0));    % [mol/m^3]                        Inlet concentration of C2H6
-C0_C2H4  =  ((P*y_C2H4_in)/(R*T0));    % [mol/m^3]                        Inlet concentration of C2H4
-C0_O2    =  ((P*y_O2_in)/(R*T0))  ;    % [mol/m^3]                        Inlet concentration of O2
-C0_CO2   =  ((P*y_CO2_in)/(R*T0)) ;    % [mol/m^3]                        Inlet concentration of CO2
-C0_CO    =  ((P*y_CO_in)/(R*T0))  ;    % [mol/m^3]                        Inlet concentration of CO
-C0_H2O   =  ((P*y_H2O_in)/(R*T0)) ;    % [mol/m^3]                        Inlet concentration of H2O
-C0_N2    =  ((P*y_N2_in)/(R*T0))  ;    % [mol/m^3]                        Inlet concentration of N2
+C0_C2H6  =  ((Pt*y_C2H6_in)/(R*T0));   % [mol/m^3]                        Inlet concentration of C2H6
+C0_C2H4  =  ((Pt*y_C2H4_in)/(R*T0));   % [mol/m^3]                        Inlet concentration of C2H4
+C0_O2    =  ((Pt*y_O2_in)/(R*T0))  ;   % [mol/m^3]                        Inlet concentration of O2
+C0_CO2   =  ((Pt*y_CO2_in)/(R*T0)) ;   % [mol/m^3]                        Inlet concentration of CO2
+C0_CO    =  ((Pt*y_CO_in)/(R*T0))  ;   % [mol/m^3]                        Inlet concentration of CO
+C0_H2O   =  ((Pt*y_H2O_in)/(R*T0)) ;   % [mol/m^3]                        Inlet concentration of H2O
+C0_N2    =  ((Pt*y_N2_in)/(R*T0))  ;   % [mol/m^3]                        Inlet concentration of N2
 C0 = [C0_C2H6          ...     
       C0_C2H4   C0_O2  ...
       C0_CO2    C0_CO  ...
@@ -149,14 +149,14 @@ end
 
 Nz = length(z_nodes)-2;  % Declare the number of Interior nodes for BC
 Nr = length(r_nodes)-2;  % Declare the number of Interior nodes for BC
-
-Initial_Guess_C_C2H6        =  ones(Nz,Nr)*((P*y_C2H6_in)/(R*T0));
-Initial_Guess_C_C2H4        =  ones(Nz,Nr)*((P*y_C2H4_in)/(R*T0));
-Initial_Guess_C_O2          =  ones(Nz,Nr)*((P*y_O2_in)/(R*T0))  ;
-Initial_Guess_C_CO2         =  ones(Nz,Nr)*((P*y_CO2_in)/(R*T0)) ;
-Initial_Guess_C_CO          =  ones(Nz,Nr)*((P*y_CO_in)/(R*T0))  ;
-Initial_Guess_C_H2O         =  ones(Nz,Nr)*((P*y_H2O_in)/(R*T0)) ;
-Initial_Guess_C_N2          =  ones(Nz,Nr)*((P*y_N2_in)/(R*T0))  ;
+  
+Initial_Guess_C_C2H6        =  ones(Nz,Nr)*((Pt*y_C2H6_in)/(R*T0)); % It possible to use C0 instead of (Pt*y_C2H6_in)/(R*T0)
+Initial_Guess_C_C2H4        =  ones(Nz,Nr)*((Pt*y_C2H4_in)/(R*T0));
+Initial_Guess_C_O2          =  ones(Nz,Nr)*((Pt*y_O2_in)/(R*T0))  ;
+Initial_Guess_C_CO2         =  ones(Nz,Nr)*((Pt*y_CO2_in)/(R*T0)) ;
+Initial_Guess_C_CO          =  ones(Nz,Nr)*((Pt*y_CO_in)/(R*T0))  ;
+Initial_Guess_C_H2O         =  ones(Nz,Nr)*((Pt*y_H2O_in)/(R*T0)) ;
+Initial_Guess_C_N2          =  ones(Nz,Nr)*((Pt*y_N2_in)/(R*T0))  ;
 Initial_Guess_Density_fluid =  ones(Nz,Nr)*397.5;                           % [g/m^3] Aspen Hysys at inlet condition
 Initial_Guess_Cs_C2H6       =  zeros(Nz,Nr);
 Initial_Guess_Cs_C2H4       =  zeros(Nz,Nr);

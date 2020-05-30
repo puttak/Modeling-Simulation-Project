@@ -4,7 +4,7 @@ function rxn = ODHReactions(C_solid,Ts,R,Pt,Flowin,RxnKinetic,deltaS0,deltaH0,co
 n_solid  = Flowin * C_solid ; % mole flow of each component [Nm^3/s * mol/m^3] = [mol/s]
 n_react = n_solid;       % mole of products in reaction
 
-nt_solid = sum(n_solid);
+% nt_solid = sum(n_solid); [unused]
 
 Ct_solid = sum(C_solid);   % total mole concentration in solid phase
 
@@ -13,8 +13,8 @@ P_solid = Pt*(C_solid/Ct_solid);
 
 % component order list for reaction: [C2H6 C2H4 O2 CO2 CO H2O]
 K = ones(1,6);
-for n = 1:6
-    K(n) = exp((deltaS0 - deltaH0*(1/Ts - 1/(25+273.15)) )/R );
+for n = 1:7
+    K(n) = exp((deltaS0*10^3 - deltaH0*(1/Ts - 1/(25+273.15)) )/R );
 end
 
 Tetha_star = 1/(1 + K(1)*P_solid(1) + K(2)*P_solid(2) + sqrt(K(3)*P_solid(3)) + ...
@@ -35,21 +35,24 @@ for i = 1:5
     end
 end
 
-% sum of rate of reactions
-rxn = rxn * RxnKinetic.vcoffrxn(:,compnumber) ;
 
 if strcmp(type,'Energy') == 1
     
     n_product = n_solid;
 % sum of heat reactions
     for i = 1:6
-        n_product(i) = n_react + rxn * RxnKinetic.vcoffrxn(:,i);
+        n_product(i) = n_react(i) + rxn * RxnKinetic.vcoffrxn(:,i); % * mcat must be consider
     end
     deltaH_reactants = sum(n_react * Cpf * (298.15 - Ts));
     deltaH_products  = sum(n_product * Cpf * (Ts - 298.15));
     deltaH_std       = [RxnKinetic.deltaHstd]';
 
     rxn = sum(rxn * (deltaH_std + deltaH_reactants + deltaH_products));
+    
+elseif strcmp(type,'Mass') == 1
+% sum of rate of reactions
+    rxn = rxn * RxnKinetic.vcoffrxn(:,compnumber);
+
 end
 
 end
