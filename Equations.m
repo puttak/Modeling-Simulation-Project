@@ -108,13 +108,13 @@ for i=1:Nz
             - (((Components(6).cp_R(1) + Components(6).cp_R(2)*T(i,k) + Components(6).cp_R(3)*T(i,k)^2 + Components(6).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(6))) ...
             - (((Components(7).cp_R(1) + Components(7).cp_R(2)*T(i,k) + Components(7).cp_R(3)*T(i,k)^2 + Components(7).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(7)));
         
-        %T(1,k) = (u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end)*T(2:end,k))/(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1));
-        %T(end,k)= (Az(end,1:end-1)*T(2:end-1,k))/Az(end,end);
-        %T(i,1)= -Ar(1,2:end)*T(i,2:end)/Ar(1,1);
-        %T(i,end)= (ker*Ar(end,1:end-1)*T(i,1:end-1) + hw*Tb)/(hw - ker*Ar(end,end));
+        T(1,k) = (u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end-1)*T(:,k) + kez*Az(1,end)/Az(end,end)*(-Az(end,2:end-1)*T(:,k)) )/((1 + kez*Az(end,1)*Az(1,end)/Az(end,end))*(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1)));
+        T(N+2,k)= (Az(end,1:end-1)*T(2:end-1,k) - Az(end,1)*(u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end-1)*T(:,k) + kez*Az(1,end)/Az(end,end)*(-Az(end,2:end-1)*T(:,k)) )/((1 + kez*Az(end,1)*Az(1,end)/Az(end,end))*(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1))) )/Az(end,end);
+        T(i,1)= (-Ar(1,2:end-1)*T(i,:) - ker*Ar(1,end)*(Ar(end,2:end-1)*T(i,:) + hw*Tb)/(hw - ker*Ar(end,end)))/((1 + (ker*Ar(1,end)*Ar(end,1))/(hw - ker*Ar(end,end)))*Ar(1,1));
+        T(i,M+2)= (ker*Ar(end,2:end-1)*T(i,:) + hw*Tb + ker*Ar(end,1)*(-Ar(1,2:end-1)*T(i,:) - ker*Ar(1,end)*(Ar(end,2:end-1)*T(i,:) + hw*Tb)/(hw - ker*Ar(end,end)))/((1 + (ker*Ar(1,end)*Ar(end,1))/(hw - ker*Ar(end,end)))*Ar(1,1)))/(hw - ker*Ar(end,end));
         
-        E_T(i,k)= -u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,2:end-1)*T(:,k) - u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,1)*'' -u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,end)*(Az(end,1:end-1)*T(2:end-1,k))/Az(end,end) + kez*Bz(i+1,2:end-1)*T(:,k) + kez*Bz(i+1,1)*(u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end)*T(2:end,k))/(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1)) + kez*Bz(i+1,end)*(Az(end,1:end-1)*T(2:end-1,k))/Az(end,end) + ker/r_nodes(k+1)*Ar(k+1,2:end-1)*T(i,:) ...
-            + ker/r_nodes(k+1)*Ar(k+1,1)*-Ar(1,2:end)*T(i,2:end)/Ar(1,1) + ker/r_nodes(k+1)*Ar(k+1,end)*(ker*Ar(end,1:end-1)*T(i,1:end-1) + hw*Tb)/(hw - ker*Ar(end,end)) + ker*Br(k+1,2:end-1)*T(i,2:end-1) + ker*Br(k+1,1)*-Ar(1,2:end)*T(i,2:end)/Ar(1,1) + ker*Br(k+1,end)*(ker*Ar(end,1:end-1)*T(i,1:end-1) + hw*Tb)/(hw - ker*Ar(end,end)) + (1-epsilon)*hg*as*(Ts(i,k) - T(i,k));
+        E_T(i,k)= -u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,2:end-1)*T(:,k) - u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,1)*'T(1,k)' -u0*Density_fluid(i,k)*Cpf(i,k)*Az(i+1,end)*'T(N+2,k)' + kez*Bz(i+1,2:end-1)*T(:,k) + kez*Bz(i+1,1)*'T(1,k)' + kez*Bz(i+1,end)*'T(N+2,k)' + ker/r_nodes(k+1)*Ar(k+1,2:end-1)*T(i,:) ...
+            + ker/r_nodes(k+1)*Ar(k+1,1)*'T(i,1)' + ker/r_nodes(k+1)*Ar(k+1,end)*'T(i,M+2)' + ker*Br(k+1,2:end-1)*T(i,:) + ker*Br(k+1,1)*'T(i,1)' + ker*Br(k+1,end)*'T(i,M+2)' + (1-epsilon)*hg*as*(Ts(i,k) - T(i,k));
         
         E_Ts(i,k)= (1-epsilon)*hg*as*(T(i,k) - Ts(i,k)) + Density_bed*ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],1,'Energy');
     end
