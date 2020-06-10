@@ -224,6 +224,11 @@ C_Ts(2:end-1,2:end-1)      = reshape(X(16*Nz*Nr+1:17*Nz*Nr),Nz,Nr)  ;
 %Boundry condition 
 
 for k = 1:numel(r_nodes)
+C_gas_In   = [C_C2H6(1,k) C_C2H4(1,k) C_O2(1,k) C_CO2(1,k) C_CO(1,k) C_H2O(1,k) C_N2(1,k)];
+C_gas_Out  = [C_C2H6(end,k) C_C2H4(end,k) C_O2(end,k) C_CO2(end,k) C_CO(end,k) C_H2O(end,k) C_N2(end,k)];
+y_gas_In   = C_gas/sum(C_gas);   % mole fraction of components in order: [C2H6 C2H4 O2 CO2 CO H2O N2]
+y_gas_Out  = C_gas/sum(C_gas);   % mole fraction of components in order: [C2H6 C2H4 O2 CO2 CO H2O N2]
+
 %z=0
 C_C_C2H6(1,k)  = (((u0*C0(1))+(epsilon*Deffz*Az(1,2:end-1)*C_C_C2H6(2:end-1,k))-(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,2:end-1)*C_C_C2H6(2:end-1,k)))/((u0)+(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,1))-(epsilon*Deffz*Az(1,1))));   
 C_C_C2H4(1,k)  = (((u0*C0(1))+(epsilon*Deffz*Az(1,2:end-1)*C_C_C2H4(2:end-1,k))-(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,2:end-1)*C_C_C2H4(2:end-1,k)))/((u0)+(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,1))-(epsilon*Deffz*Az(1,1))));
@@ -232,13 +237,19 @@ C_C_CO2(1,k)   = (((u0*C0(1))+(epsilon*Deffz*Az(1,2:end-1)*C_C_CO2(2:end-1,k))-(
 C_C_CO(1,k)    = (((u0*C0(1))+(epsilon*Deffz*Az(1,2:end-1)*C_C_CO(2:end-1,k))-(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,2:end-1)*C_C_CO(2:end-1,k)))/((u0)+(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,1))-(epsilon*Deffz*Az(1,1))));   
 C_C_H2O(1,k)   = (((u0*C0(1))+(epsilon*Deffz*Az(1,2:end-1)*C_C_H2O(2:end-1,k))-(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,2:end-1)*C_C_H2O(2:end-1,k)))/((u0)+(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,1))-(epsilon*Deffz*Az(1,1))));
 C_C_N2(1,k)    = (((u0*C0(1))+(epsilon*Deffz*Az(1,2:end-1)*C_C_N2(2:end-1,k))-(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,2:end-1)*C_C_N2(2:end-1,k)))/((u0)+(((epsilon*Deffz*Az(1,end))/(Az(end,end)))*Az(end,1))-(epsilon*Deffz*Az(1,1))));   
-C_Cs_C2H6(1,k) = 0;   
-C_Cs_C2H4(1,k) = 0;
-C_Cs_O2(1,k)   = 0;   
-C_Cs_CO2(1,k)  = 0;
-C_Cs_CO(1,k)   = 0;   
-C_Cs_H2O(1,k)  = 0;
-C_Cpf(1,k)     = 0;   
+C_Cs_C2H6(1,k) = (1-epsilon)*kg*as*(C_C_C2H6(i,k) - C_Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],1,'Mass'));   
+C_Cs_C2H4(1,k) = (1-epsilon)*kg*as*(C_Cs_C2H4(i,k) - C_Cs_C2H4(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],2,'Mass'));
+C_Cs_O2(1,k)   = (1-epsilon)*kg*as*(C_C_O2(i,k) - C_Cs_O2(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],3,'Mass'));   
+C_Cs_CO2(1,k)  = (1-epsilon)*kg*as*(C_C_CO2(i,k) - C_Cs_CO2(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],4,'Mass'));
+C_Cs_CO(1,k)   = (1-epsilon)*kg*as*(C_C_CO(i,k) - C_Cs_CO(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],5,'Mass'));   
+C_Cs_H2O(1,k)  = (1-epsilon)*kg*as*(C_C_H2O(i,k) - C_Cs_H2O(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],6,'Mass'));
+C_Cpf(1,k)     = Cpf(i,k) - (((Components(1).cp_R(1) + Components(1).cp_R(2)*T(i,k) + Components(1).cp_R(3)*T(i,k)^2 + Components(1).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(1))) ...
+                - (((Components(2).cp_R(1) + Components(2).cp_R(2)*T(i,k) + Components(2).cp_R(3)*T(i,k)^2 + Components(2).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(2))) ...
+                - (((Components(3).cp_R(1) + Components(3).cp_R(2)*T(i,k) + Components(3).cp_R(3)*T(i,k)^2 + Components(3).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(3))) ...
+                - (((Components(4).cp_R(1) + Components(4).cp_R(2)*T(i,k) + Components(4).cp_R(3)*T(i,k)^2 + Components(4).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(4))) ...
+                - (((Components(5).cp_R(1) + Components(5).cp_R(2)*T(i,k) + Components(5).cp_R(3)*T(i,k)^2 + Components(5).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(5))) ...
+                - (((Components(6).cp_R(1) + Components(6).cp_R(2)*T(i,k) + Components(6).cp_R(3)*T(i,k)^2 + Components(6).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(6))) ...
+                - (((Components(7).cp_R(1) + Components(7).cp_R(2)*T(i,k) + Components(7).cp_R(3)*T(i,k)^2 + Components(7).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(7)));  
 C_T(1,k)       = 0;
 C_Ts(1,k)      = 0;
 C_Rof(1,k)     = (Pt*((C_C_C2H6(1,k)/(C_C_C2H6(1,k)+C_C_C2H4(1,k)+C_C_O2(1,k)+C_C_CO2(1,k)+C_C_CO(1,k)+C_C_H2O(1,k)+C_C_N2(1,k)))*Components(1).Mw + (C_C_C2H4(1,k)/(C_C_C2H6(1,k)+C_C_C2H4(1,k)+C_C_O2(1,k)+C_C_CO2(1,k)+C_C_CO(1,k)+C_C_H2O(1,k)+C_C_N2(1,k)))*Components(2).Mw + (C_C_O2(1,k)/(C_C_C2H6(1,k)+C_C_C2H4(1,k)+C_C_O2(1,k)+C_C_CO2(1,k)+C_C_CO(1,k)+C_C_H2O(1,k)+C_C_N2(1,k)))*Components(3).Mw + (C_C_CO2(1,k)/(C_C_C2H6(1,k)+C_C_C2H4(1,k)+C_C_O2(1,k)+C_C_CO2(1,k)+C_C_CO(1,k)+C_C_H2O(1,k)+C_C_N2(1,k)))*Components(4).Mw + (C_C_CO(1,k)/(C_C_C2H6(1,k)+C_C_C2H4(1,k)+C_C_O2(1,k)+C_C_CO2(1,k)+C_C_CO(1,k)+C_C_H2O(1,k)+C_C_N2(1,k)))*Components(5).Mw ...
