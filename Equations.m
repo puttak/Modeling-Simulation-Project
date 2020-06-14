@@ -89,7 +89,7 @@ for i=1:Nz
         
         E_Cs_C2H6(i,k)= (1-epsilon)*kg*as*(C_C2H6(i,k) - Cs_C2H6(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],1,'Mass'));
         
-        E_Cs_C2H4(i,k)= (1-epsilon)*kg*as*(Cs_C2H4(i,k) - Cs_C2H4(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],2,'Mass'));
+        E_Cs_C2H4(i,k)= (1-epsilon)*kg*as*(C_C2H4(i,k) - Cs_C2H4(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],2,'Mass'));
         
         E_Cs_O2(i,k)=   (1-epsilon)*kg*as*(C_O2(i,k) - Cs_O2(i,k)) + Density_bed*(ODHReactions(C_solid,Ts(i,k),R,Pt,Flowin,RxnKinetic,[Components.deltaS0],[Components.deltaH0],3,'Mass'));
         
@@ -110,7 +110,7 @@ for i=1:Nz
             - (((Components(7).cp_R(1) + Components(7).cp_R(2)*T(i,k) + Components(7).cp_R(3)*T(i,k)^2 + Components(7).cp_R(4)*T(i,k)^(-2))*R)*(y_gas(7)));
         
         %T(1,k) = (u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end-1)*T(:,k) + kez*Az(1,end)/Az(end,end)*(-Az(end,2:end-1)*T(:,k)) )/((1 + kez*Az(end,1)*Az(1,end)/Az(end,end))*(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1)));
-        %T(N+2,k)= (Az(end,1:end-1)*T(2:end-1,k) - Az(end,1)*(u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end-1)*T(:,k) + kez*Az(1,end)/Az(end,end)*(-Az(end,2:end-1)*T(:,k)) )/((1 + kez*Az(end,1)*Az(1,end)/Az(end,end))*(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1))) )/Az(end,end);
+        %T(N+2,k)= (-Az(end,2:end-1)*T(2:end-1,k) - Az(end,1)*(u0*Density_fluid(i,k)*Cpf(i,k)*T0 + kez*Az(1,2:end-1)*T(:,k) + kez*Az(1,end)/Az(end,end)*(-Az(end,2:end-1)*T(:,k)) )/((1 + kez*Az(end,1)*Az(1,end)/Az(end,end))*(u0*Density_fluid(i,k)*Cpf(i,k) - kez*Az(1,1))) )/Az(end,end);
         %T(i,1)= (-Ar(1,2:end-1)*T(i,:) - ker*Ar(1,end)*(Ar(end,2:end-1)*T(i,:) + hw*Tb)/(hw - ker*Ar(end,end)))/((1 + (ker*Ar(1,end)*Ar(end,1))/(hw - ker*Ar(end,end)))*Ar(1,1));
         %T(i,M+2)= (ker*Ar(end,2:end-1)*T(i,:) + hw*Tb + ker*Ar(end,1)*(-Ar(1,2:end-1)*T(i,:) - ker*Ar(1,end)*(Ar(end,2:end-1)*T(i,:) + hw*Tb)/(hw - ker*Ar(end,end)))/((1 + (ker*Ar(1,end)*Ar(end,1))/(hw - ker*Ar(end,end)))*Ar(1,1)))/(hw - ker*Ar(end,end));
         
