@@ -17,7 +17,7 @@ But two of the leading challenges of this technology can be mentioned below:
 ![ODH Reactions](/img/Rxns.JPG)
 
 Solve systems of time variante PDEs:
-Space domain | Time domain
+ Time domain | Space domain
 ------------ | -------------
   t variable | r ,z variables
 ODE Runge-Kutta | Orthogonal Collocation 
