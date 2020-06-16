@@ -1,4 +1,4 @@
-clc;clear all;close all;
+clc;format long
 %% Defining the require constants of catalyts and reactor dimensions
 
 L = 2.5;                         % [m]                              Length of reactor.
@@ -27,9 +27,9 @@ y_CO2_in = 0;                          % [%mol]                           Mole f
 y_CO_in = 0;                           % [%mol]                           Mole frac of inlet Carbon monoxid.
 y_H2O_in = 0;                          % [%mol]                           Mole frac of inlet Water.
 y = [y_C2H6_in          ...
-    y_C2H4_in y_O2_in  ...
-    y_CO2_in  y_CO_in  ...
-    y_H2O_in  y_N2_in     ];           % [%mol]                           Mole frac list of total componets [C2H6 C2H4 O2 CO2 CO H2O N2]
+     y_C2H4_in y_O2_in  ...
+     y_CO2_in  y_CO_in  ...
+     y_H2O_in  y_N2_in     ];          % [%mol]                           Mole frac list of total componets [C2H6 C2H4 O2 CO2 CO H2O N2]
 C0_C2H6  =  ((Pt*y_C2H6_in)/(R*T0));   % [mol/m^3]                        Inlet concentration of C2H6
 C0_C2H4  =  ((Pt*y_C2H4_in)/(R*T0));   % [mol/m^3]                        Inlet concentration of C2H4
 C0_O2    =  ((Pt*y_O2_in)/(R*T0))  ;   % [mol/m^3]                        Inlet concentration of O2
@@ -38,24 +38,24 @@ C0_CO    =  ((Pt*y_CO_in)/(R*T0))  ;   % [mol/m^3]                        Inlet 
 C0_H2O   =  ((Pt*y_H2O_in)/(R*T0)) ;   % [mol/m^3]                        Inlet concentration of H2O
 C0_N2    =  ((Pt*y_N2_in)/(R*T0))  ;   % [mol/m^3]                        Inlet concentration of N2
 C0 = [C0_C2H6          ...
-    C0_C2H4   C0_O2  ...
-    C0_CO2    C0_CO  ...
-    C0_H2O    C0_N2     ];             % [mol/m^3]                        Inlet concentration
+      C0_C2H4   C0_O2  ...
+      C0_CO2    C0_CO  ...
+      C0_H2O    C0_N2     ];           % [mol/m^3]                        Inlet concentration
 
 %% Defining the require constants
 
 Deffr = 32*(1/3600);             % [m^2/h][m^2/s]                   Effective mass transfer
-%                                  coefficient in radius direction.
+                                 %                                  coefficient in radius direction.
 Deffz = 53*(1/3600);             % [m^2/h][m^2/s]                   Effective mass transfer coefficient
-%                                  in horizontal axis direction.
+                                 %                                  in horizontal axis direction.
 
 kg = 576*(1/3600);               % [m^3/(m^2*h)][m^3/(m^2*s)]       Surface mass transfer coefficient.
 hg = 928.8*(1000)*(1/3600);      % [kJ/(m^2*h*K)][J/(m^2*s*K)]      Surface heat transfer coefficient.
 
 keffz = 9.72*(1000)*(1/3600);    % [kJ/(m*h*K)][J/(m*s*K)]          Effective thermal conductivity.
-%                                  in the radius direction.
+                                 %                                  in the radius direction.
 keffr = 9.72*(1000)*(1/3600);    % [kJ/(m*h*K)][J/(m*s*K)]          Effective thermal conductivity.
-%                                  in the radius direction.
+                                 %                                  in the radius direction.
 
 hw = 1051.2*(1000)*(1/3600);     % [kJ/(m^2*h*K)][J/(m^2*s*K)]      Wall heat transfer coefficient.
 
@@ -68,17 +68,17 @@ hw = 1051.2*(1000)*(1/3600);     % [kJ/(m^2*h*K)][J/(m^2*s*K)]      Wall heat tr
 % R=8.314 (J/mol*K)
 
 C2H6 = struct('Mw',30.07,   'Tc',305.406,   'Pc',4880109,...
-    'cp_R',[1.131,0.019225,-0.000005561,0,1500] ,'deltaS0',5.27e01 ,'deltaH0',(1000)*4.80e01);
+    'cp_R',[1.131,0.019225,-0.000005561,0,1500] ,'deltaS0',-5.27e01 ,'deltaH0',(1000)*-4.80e01);
 C2H4 = struct('Mw',28.054,  'Tc',282.3438,  'Pc',5045427,...
-    'cp_R',[1.424,0.014394,-0.000004392,0,1500] ,'deltaS0',4.34e01 ,'deltaH0',(1000)*1.48e02);
+    'cp_R',[1.424,0.014394,-0.000004392,0,1500] ,'deltaS0',-4.34e01 ,'deltaH0',(1000)*-1.48e02);
 O2   = struct('Mw',31.998,  'Tc',154.645,   'Pc',5043213,...
-    'cp_R',[3.639,0.000506,0,-22700,2000]       ,'deltaS0',5.59e01 ,'deltaH0',(1000)*6.02e01);
+    'cp_R',[3.639,0.000506,0,-22700,2000]       ,'deltaS0',-5.59e01 ,'deltaH0',(1000)*-6.02e01);
 CO2  = struct('Mw',44.009,  'Tc',304.1548,  'Pc',7380862,...
-    'cp_R',[5.457,0.001045,0,-115700,2000]      ,'deltaS0',5.66e01 ,'deltaH0',(1000)*8.38e01);
+    'cp_R',[5.457,0.001045,0,-115700,2000]      ,'deltaS0',-5.66e01 ,'deltaH0',(1000)*-8.38e01);
 CO   = struct('Mw',28.01,   'Tc',134.18,    'Pc',3710046,...
-    'cp_R',[3.376,0.000557,0,-3100,2500]        ,'deltaS0',8.66e01 ,'deltaH0',(1000)*4.09e01);
+    'cp_R',[3.376,0.000557,0,-3100,2500]        ,'deltaS0',-8.66e01 ,'deltaH0',(1000)*-4.09e01);
 H2O  = struct('Mw',18.015,  'Tc',647.1081,  'Pc',22072227,...
-    'cp_R',[3.47,0.00145,0,12100,2000]          ,'deltaS0',5.27e01 ,'deltaH0',(1000)*8.63e01);
+    'cp_R',[3.47,0.00145,0,12100,2000]          ,'deltaS0',-5.27e01 ,'deltaH0',(1000)*-8.63e01);
 N2   = struct('Mw',28.014,  'Tc',126.2069,  'Pc',3398154.1,...
     'cp_R',[3.28,0.000593,0,4000,2000]          ,'deltaS0',[0]      ,'deltaH0',[0]);
 
@@ -103,8 +103,8 @@ RxnKinetic = struct('Aprime',[4.95 1.35 1.76 2.61 2.16]*(1/1000)*(1/3600),...
 
 %===Interior points and coefficients matrix -------------------------------
 
-Nz = 3; % No. of interior point in z direction.
-Nr = 2; % No. of interior point in r direction.
+Nz = 5; % No. of interior point in z direction.
+Nr = 3; % No. of interior point in r direction.
 zmin = 0; zmax = 1;
 rmin = 0; rmax = 1;
 z_nodes = [0,sort(Roots_of_Jacobi_Polynomial(0,0,Nz))',1] ;  % Roots of Jacobi polynomial with (a,b==0) in z direction.
@@ -172,7 +172,7 @@ Initial_Guess_Cs_O2         =  zeros(Nz,Nr);
 Initial_Guess_Cs_CO2        =  zeros(Nz,Nr);
 Initial_Guess_Cs_CO         =  zeros(Nz,Nr);
 Initial_Guess_Cs_H2O        =  zeros(Nz,Nr);
-Initial_Guess_Cpf           =  ones(Nz,Nr)*33.3;                    % [J/(mol.K)] Aspen Hysys at inlet condition
+Initial_Guess_Cpf           =  ones(Nz,Nr)*33.3/29;                    % [J/(mol.K)] Aspen Hysys at inlet condition
 Initial_Guess_T             =  ones(Nz,Nr)*T0;
 Initial_Guess_Ts            =  ones(Nz,Nr)*T0;
 
@@ -188,8 +188,10 @@ Initial_Guess=[reshape(Initial_Guess_C_C2H6,1,Nz*Nr)  ,  reshape(Initial_Guess_C
 
 %===Solver ----------------------------------------------------------------
 
-X=fsolve(@(x) Equations(x,Az,Bz,Ar,Br,Nz,Nr,u0,C0,Pt,epsilon,Density_bed,...
-    Deffz,Deffr,keffz,keffr,R_nodes,kg,hg,as,Components,RxnKinetic,R),Initial_Guess);
+% option = optimoptions('fsolve','Algorithm','trust-region','StepTolerance',1e-12,...
+%     'MaxFunctionEvaluations',500);
+X=fsolve(@(x) Equations(x,Az,Bz,Ar,Br,Nz,Nr,u0,C0,Pt,T0,hw,Tb,epsilon,Density_bed,...
+    Flowin,Deffz,Deffr,keffz,keffr,R_nodes,kg,hg,as,Components,RxnKinetic,R),Initial_Guess);
 
 C_C2H6_hat   = sym(zeros(1)) ;       C_C2H4_hat  = sym(zeros(1))  ;
 C_O2_hat     = sym(zeros(1)) ;       C_CO2_hat   = sym(zeros(1))  ;
@@ -361,7 +363,3 @@ for i = 1 : numel(nodes_Z)
     end
 end
 %% PLot
-
-
-
-
